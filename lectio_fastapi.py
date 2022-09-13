@@ -18,6 +18,11 @@ def test_login(lectio_school_id: int, lectio_user: str, lectio_password: str):
     login_successful = False
     return {"login_successful": login_successful}
 
+@app.get("/school_ids/{lectio_school_id, lectio_school_name}")
+def test_login(lectio_school_id: int, lectio_school_name: str):
+    school_list = {}
+    return school_list
+
 def main():
     pass
 
