@@ -1,18 +1,19 @@
 import time
-
+import requests
+import bs4
 from decouple import config
 from selenium.common.exceptions import SessionNotCreatedException, WebDriverException, NoSuchElementException
 from selenium.webdriver.common.keys import Keys
-import send_sms, log
 import datetime
 import sys
+from typing import List
 
 
 
 max_try_attempts = 100
 try_attempt = 0
 
-def lectio_login(browser):
+def lectio_login(school_id):
     now = datetime.datetime.now()
 
     #go to login page
@@ -172,12 +173,51 @@ def lectio_test_classname(browser, test_value :str):
 
 
 
+def get_lectio_main_page() -> bs4.BeautifulSoup:
+    page = requests.get("https://www.lectio.dk/lectio/login_list.aspx")
+    soup = bs4.BeautifulSoup(page.content, "html.parser")
+    return soup
+
+def search_webpage_for_schools(school_name :str): # -> List[str, int]:
+    page = get_lectio_main_page()
+
+    this_list :list = []
+    this_dict :dict = {}
+
+
+    raw_schools = page.find_all('a', href=True)
+    for item in raw_schools:
+        this_list.append(item)
+
+    print(type(this_list))
+    for item in this_list:
+        if "default.aspx" in str(item):
+            this_id = git_digits_from_string(str(item))
+            this_school = str(item).split(">")[1:]
+            this_school = str(this_school)[:-9]
+            this_school = this_school[2:]
+            this_dict.update({'id' : str(this_id), 'school_name' : this_school})
+    print(this_dict)
+
+
+def git_digits_from_string(string :str) -> str:
+    digits = ""
+    for c in string:
+        if c.isdigit():
+            digits = digits + c
+    return digits
+
+
+
+
 def main():
-    lectio_user = config('LECTIO_RPA_USER')
-    lectio_password = config('LECTIO_RPA_PASSWORD')
-    lectio_test_class = config('LECTIO_RPA_TEST_CLASS')
-    lectio_url_send_msg = config('LECTIO_SEND_MSG_URL')
-    lectio_url_login = config('LECTIO_LOGIN_URL')
+    #lectio_user = config('LECTIO_RPA_USER')
+    #lectio_password = config('LECTIO_RPA_PASSWORD')
+    #lectio_test_class = config('LECTIO_RPA_TEST_CLASS')
+    #lectio_url_send_msg = config('LECTIO_SEND_MSG_URL')
+    #lectio_url_login = config('LECTIO_LOGIN_URL')
+    search_webpage_for_schools("test")
+    return ["test", 1]
 
 if __name__ == "__main__":
     main()
