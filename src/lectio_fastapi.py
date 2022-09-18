@@ -8,9 +8,6 @@ app = FastAPI()
 def read_root():
     return {'msg': 'welcome to the lectio-fastapi ', 'success': True}
 
-@app.get("/school_ids/{lectio_school_name}")
-def get_school_id():
-    return {'msg': 'to get the shchool_id, you will need to provide a search string', 'success': True}
 
 @app.post("/school_ids/{lectio_school_name}")
 def get_school_id(lectio_school_name: str):
@@ -24,9 +21,6 @@ def test_login(lectio_school_id: int, lectio_user: str, lectio_password: str):
     lectio_login_result = lectio.lectio_login(lectio_school_id, lectio_user, lectio_password, browser)
     return lectio_login_result
 
-@app.get("/message_send/")
-def get_school_id():
-    return {'msg': 'you can use the post function to post a message in lectio', 'success': True}
 
 @app.post("/message_send/{lectio_school_id, lectio_user, lectio_password, send_to, subject, msg, msg_can_be_replied}")
 def send_msg(lectio_school_id: int, lectio_user: str, lectio_password: str, send_to :str, subject: str, msg: str, msg_can_be_replied: bool):
