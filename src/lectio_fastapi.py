@@ -6,7 +6,7 @@ app = FastAPI()
 
 @app.get("/")
 def read_root():
-    return {'msg': 'welcome to the lectio-fastapi ', 'success': True}
+    return {'msg': 'welcome to the lectio-fastapi', 'success': True}
 
 
 @app.post("/school_ids/{lectio_school_name}")
