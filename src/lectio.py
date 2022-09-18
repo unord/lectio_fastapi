@@ -1,13 +1,10 @@
 import time
 import requests
 import bs4
-from decouple import config
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.by import By
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
-
+import os
 
 
 
@@ -236,14 +233,16 @@ def get_digits_from_string(string :str) -> str:
     return digits
 
 def get_webdriver() -> webdriver:
-    browser = webdriver.Chrome(ChromeDriverManager().install())
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
     return browser
 
 def main():
-    lectio_user = config('LECTIO_RPA_USER')
-    lectio_password = config('LECTIO_RPA_PASSWORD')
-    print(lectio_login(235, lectio_user, lectio_password, get_webdriver()))
-
+    pass
 
 
 if __name__ == "__main__":
