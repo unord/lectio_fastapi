@@ -10,7 +10,7 @@ def read_root():
 
 @app.get("/school_ids/{lectio_school_name}")
 def get_school_id(lectio_school_name: str):
-    json_object = lectio.search_webpage_for_schools(lectio_school_name)
+    json_object = lectio.lectio_search_webpage_for_schools(lectio_school_name)
     return JSONResponse(content=json_object)
 
 @app.get("/message_send/{lectio_school_id, lectio_user, lectio_password}")
@@ -27,7 +27,7 @@ def send_msg(lectio_school_id: int, lectio_user: str, lectio_password: str, send
         lectio_send_msg_result = lectio.lectio_send_msg(send_to, subject, msg, msg_can_be_replied, lectio_school_id, browser)
         return lectio_send_msg_result
     else:
-        return {'success': False}
+        return {'msg': 'Login failed, wrong username, password and school_id combination ', 'success': False}
 
 def main():
     pass

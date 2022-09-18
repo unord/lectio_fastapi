@@ -6,7 +6,41 @@ from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 import os
 
+def clean_for_json(this_dict :str) -> str:
+    this_dict = str(this_dict).replace("(", '').replace(")", '')
+    this_dict = "{'schools': [" + this_dict + "]}"
+    this_dict = this_dict.replace("'id'", "{'id")
+    this_dict = this_dict.replace("'school_name',", "'school_name' :")
+    this_dict = this_dict.replace(",", "}, ")
+    this_dict = this_dict.replace(",", "}, ")
+    this_dict = this_dict.replace("'id}},", "{'id' :")
+    this_dict = this_dict.replace(": 'school_name'", ", 'school_name'")
+    this_dict = this_dict.replace("{{", "{")
+    this_dict = this_dict.replace("}}", "}")
+    this_dict = this_dict.replace("{{", "{")
+    this_dict = this_dict.replace("}}", "}")
+    return  this_dict
 
+def get_digits_from_string(string :str) -> str:
+    digits = ""
+    for c in string:
+        if c.isdigit():
+            digits = digits + c
+    return digits
+
+def get_webdriver() -> webdriver:
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+    return browser
+
+def get_webpage(this_webpage) -> bs4.BeautifulSoup:
+    page = requests.get(this_webpage)
+    soup = bs4.BeautifulSoup(page.content, "html.parser")
+    return soup
 
 def lectio_login(school_id :int, lectio_user :str, lectio_password :str, browser :webdriver) -> dict:
     max_try_attempts = 100
@@ -184,12 +218,7 @@ def lectio_send_msg(send_to :str, subject :str, msg :str, this_msg_can_be_replie
     return {'msg': f'message sent successful to: {input_receiver_name}', 'success': True}
 
 
-def get_webpage(this_webpage) -> bs4.BeautifulSoup:
-    page = requests.get(this_webpage)
-    soup = bs4.BeautifulSoup(page.content, "html.parser")
-    return soup
-
-def search_webpage_for_schools(school_name="") -> dict:
+def lectio_search_webpage_for_schools(school_name="") -> dict:
     page = get_webpage("https://www.lectio.dk/lectio/login_list.aspx")
 
     this_list :list = []
@@ -210,36 +239,6 @@ def search_webpage_for_schools(school_name="") -> dict:
     this_dict = clean_for_json(this_dict)
     return this_dict
 
-def clean_for_json(this_dict :str) -> str:
-    this_dict = str(this_dict).replace("(", '').replace(")", '')
-    this_dict = "{'schools': [" + this_dict + "]}"
-    this_dict = this_dict.replace("'id'", "{'id")
-    this_dict = this_dict.replace("'school_name',", "'school_name' :")
-    this_dict = this_dict.replace(",", "}, ")
-    this_dict = this_dict.replace(",", "}, ")
-    this_dict = this_dict.replace("'id}},", "{'id' :")
-    this_dict = this_dict.replace(": 'school_name'", ", 'school_name'")
-    this_dict = this_dict.replace("{{", "{")
-    this_dict = this_dict.replace("}}", "}")
-    this_dict = this_dict.replace("{{", "{")
-    this_dict = this_dict.replace("}}", "}")
-    return  this_dict
-
-def get_digits_from_string(string :str) -> str:
-    digits = ""
-    for c in string:
-        if c.isdigit():
-            digits = digits + c
-    return digits
-
-def get_webdriver() -> webdriver:
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
-    browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-    return browser
 
 def main():
     pass
