@@ -10,7 +10,7 @@ def read_root():
 
 
 @app.get("/school_ids/")
-def get_school_id(lectio_school_name: str):
+def get_school_id():
     return {'msg': 'get_school_id function gets a school id that contains the string', 'success': True}
 
 @app.post("/school_ids/{lectio_school_name}")
