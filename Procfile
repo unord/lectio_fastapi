@@ -1,1 +1,1 @@
-web: gunicorn -w 3 -k uvicorn.workers.UvicornWorker .src/lectio_fastapi:app
+web: gunicorn -w 3 -k uvicorn.workers.UvicornWorker lectio_fastapi:app
