@@ -22,7 +22,7 @@ def test_login(lectio_school_id: int, lectio_user: str, lectio_password: str):
     return lectio_login_result
 
 
-@app.post("/message_send/{lectio_school_id, lectio_user, lectio_password, send_to, subject, msg, msg_can_be_replied}")
+@app.get("/message_send/{lectio_school_id, lectio_user, lectio_password, send_to, subject, msg, msg_can_be_replied}")
 def send_msg(lectio_school_id: int, lectio_user: str, lectio_password: str, send_to :str, subject: str, msg: str, msg_can_be_replied: bool):
     browser = lectio.get_webdriver()
     lectio_login_result = lectio.lectio_login(lectio_school_id, lectio_user, lectio_password,browser)
