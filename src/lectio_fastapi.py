@@ -23,7 +23,7 @@ def test_login(lectio_school_id: int, lectio_user: str, lectio_password: str):
 
 @app.get("/message_send/")
 def send_msg():
-    return {'msg': 'message_send function for lectio', 'success': true}
+    return {'msg': 'message_send function for lectio', 'success': True}
 
 @app.get("/message_send/{lectio_school_id, lectio_user, lectio_password, send_to, subject, msg, msg_can_be_replied}")
 def send_msg(lectio_school_id: int, lectio_user: str, lectio_password: str, send_to :str, subject: str, msg: str, msg_can_be_replied: bool):
