@@ -9,6 +9,10 @@ def read_root():
     return {'msg': 'welcome to the lectio-fastapi', 'success': True}
 
 
+@app.get("/school_ids/")
+def get_school_id(lectio_school_name: str):
+    return {'msg': 'get_school_id function gets a school id that contains the string', 'success': True}
+
 @app.post("/school_ids/{lectio_school_name}")
 def get_school_id(lectio_school_name: str):
     json_object = lectio.lectio_search_webpage_for_schools(lectio_school_name)
