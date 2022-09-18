@@ -6,6 +6,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 import os
 
+
 def clean_for_json(this_dict :str) -> str:
     this_dict = str(this_dict).replace("(", '').replace(")", '')
     this_dict = "{'schools': [" + this_dict + "]}"
@@ -34,7 +35,7 @@ def get_webdriver() -> webdriver:
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
-    browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+    browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"))
     return browser
 
 def get_webpage(this_webpage) -> bs4.BeautifulSoup:
@@ -170,24 +171,12 @@ def lectio_send_msg(send_to :str, subject :str, msg :str, this_msg_can_be_replie
             try_attempt = try_attempt + 1
 
 
-    # checkbox may reply set to unchecked
-    if this_msg_can_be_replied == True:
+    # checkbox may reply
+    if this_msg_can_be_replied == False:
         try:
-            checkbox_may_reply = browser.find_element("xpath", "/html/body/div[1]/form[2]/section/div[3]/section/div[2]/table/tbody/tr[3]/td/span/input")
-            checkbox_may_reply.click()
+            checkbox_may_reply = browser.find_element("id", "s_m_Content_Content_RepliesToThreadOrExistingMessageAllowedChk").click()
         except:
             return {'msg': 'Could not find checkbox: may reply', 'success': False}
-        try_attempt = 0
-        while try_attempt != max_try_attempts:
-            try:
-                checkbox_may_reply = browser.find_element("id", "s_m_Content_Content_RepliesToThreadOrExistingMessageAllowedChk")
-                if checkbox_may_reply.is_selected():
-                    checkbox_may_reply.click()
-                    try_attempt = max_try_attempts
-            except NoSuchElementException:
-                if try_attempt == max_try_attempts - 1:
-                    return {'msg': 'Could not find may replied checkbox. May be problems loading lectio.dk', 'success': False}
-                try_attempt = try_attempt + 1
 
 
     # insert message in "message field"
