@@ -171,9 +171,9 @@ def lectio_send_msg(send_to :str, subject :str, msg :str, this_msg_can_be_replie
 
 
     # checkbox may reply set to unchecked
-    if this_msg_can_be_replied == False:
+    if this_msg_can_be_replied == True:
         try:
-            checkbox_may_reply = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageAllowReply_cb")
+            checkbox_may_reply = browser.find_element("xpath", "/html/body/div[1]/form[2]/section/div[3]/section/div[2]/table/tbody/tr[3]/td/span/input")
             checkbox_may_reply.click()
         except:
             return {'msg': 'Could not find checkbox: may reply', 'success': False}
