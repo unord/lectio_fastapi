@@ -2,18 +2,16 @@ import time
 import requests
 import bs4
 from decouple import config
-from selenium.common.exceptions import SessionNotCreatedException, WebDriverException, NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
-import datetime
-import sys
-from typing import List
-import json
 
 
 
-def lectio_login(school_id :int, lectio_user :str, lectio_password :str, browser):
+
+def lectio_login(school_id :int, lectio_user :str, lectio_password :str, browser :webdriver) -> dict:
     max_try_attempts = 100
 
     this_url = f"https://www.lectio.dk/lectio/{school_id}/login.aspx"
@@ -65,106 +63,128 @@ def lectio_login(school_id :int, lectio_user :str, lectio_password :str, browser
         current_user = browser.find_element("id", "s_m_LoginOutLink").text
         return {'msg': 'Login successful', 'success': True}
     except NoSuchElementException as e:
-        print(e)
         return {'msg': 'Login failed, wrong username, password and school_id combination ', 'success': False}
 
-def lectio_send_msg(browser, this_team, this_msg, disbale_send=False):
-    now = datetime.datetime.now()
-    #this_team = lectio_test_class #For test only
-    this_subject = f"Fagevalueringsundersøgelse for hold: {this_team}"
+def lectio_send_msg(send_to :str, subject :str, msg :str, this_msg_can_be_replied :bool, lectio_school_id :int, browser :webdriver) -> dict:
+    max_try_attempts = 100
+    main_page_url = f"https://www.lectio.dk/lectio/{lectio_school_id}/forside.aspx"
 
-    # go to lectio send message page
+    # go to main page
     try:
-        browser.get(lectio_url_send_msg)
+        browser.get(main_page_url)
+    except Exception as e:
+        print(e)
+        return {'msg': 'Could not load page', 'success': False}
+
+
+    # go to lectio new message page
+    time.sleep(1)
+    try:
+        link_beskeder = browser.find_element("xpath", '/html/body/div[1]/form[2]/section/div[2]/div[2]/nav/div/div[12]/a')
+        link_beskeder.click()
+    except Exception as e:
+        print(e)
+        return {'msg': 'Could not find link: Beskeder', 'success': False}
+
+
+    # go to lectio message page
+    try:
+        link_beskeder = browser.find_element("xpath", '/html/body/div[1]/form[2]/section/div[3]/div/div[3]/div[2]/div[1]/div[1]/a')
+        link_beskeder.click()
     except:
-        error_msg = "FAG_eval_rpa crashed when trying to access lectio send message page"
-        log.log("FAG_eval_rpa crashed when trying to access lectio send message page")
-        send_sms.sms_troubleshooters(error_msg)
-        sys.exit()
+        return {'msg': 'Could not find link: Ny besked', 'success': False}
+
 
     # insert class in "to field"
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            input_class_name = browser.find_element_by_id("s_m_Content_Content_addRecipientDD_inp")
-            input_class_name.send_keys(this_team)
+            input_class_name = browser.find_element("id", "s_m_Content_Content_addRecipientDD_inp")
+            input_class_name.send_keys(send_to)
             input_class_name.send_keys(Keys.ARROW_DOWN)
             input_class_name.send_keys(Keys.ARROW_DOWN)
-            if this_team == "hvhh1c Vø":
-                input_class_name.send_keys(Keys.ARROW_DOWN)
-
             input_class_name.send_keys(Keys.ENTER)
             try_attempt = max_try_attempts
         except NoSuchElementException:
             if try_attempt == max_try_attempts - 1:
-                error_msg = f"{now}: FAG_eval_rpa crashed when trying to type the class_name in lectio send message page"
-                log.log("FAG_eval_rpa crashed when trying to type the class_name in lectio send message page")
-                send_sms.sms_troubleshooters(error_msg)
-                sys.exit()
-            try_attempt = try_attempt + 1
+                return {'msg': 'Could not find who to send to. May be problems loading lectio.dk', 'success': False}
+            try_attempt += 1
+
+    # test to if receiver is correct
+    try_attempt = 0
+    input_receiver_name = ""
+    while try_attempt != max_try_attempts:
+        try:
+            input_receiver_name = browser.find_element("xpath", "/html/body/div[1]/form[2]/section/div[3]/section/div[2]/table/tbody/tr[1]/td/table/tbody/tr[1]/td/div/table/tbody/tr/td[2]/span").text
+            if input_receiver_name != send_to or input_receiver_name == "":
+                return {'msg': f'Value of who is being sent to, is not the same as the receiver found on lectio.dk. User found by lectio.dk: {input_receiver_name}', 'success': False}
+            try_attempt = max_try_attempts
+        except NoSuchElementException:
+            if try_attempt == max_try_attempts - 1:
+                return {'msg': 'Could not find who the msg is being sent to. May be problems loading lectio.dk', 'success': False}
+            try_attempt += 1
+
+
 
     # insert message in "subject field"
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            input_subject = browser.find_element_by_id("s_m_Content_Content_CreateThreadEditMessageTitle_tb")
-            input_subject.send_keys(this_subject)
+            input_subject = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageTitle_tb")
+            input_subject.send_keys(subject)
             try_attempt = max_try_attempts
         except NoSuchElementException:
             if try_attempt == max_try_attempts - 1:
-                error_msg = f"{now}: FAG_eval_rpa crashed when trying to type the subject in lectio send message page"
-                log.log("FAG_eval_rpa crashed when trying to type the subject in lectio send message page")
-                send_sms.sms_troubleshooters(error_msg)
-                sys.exit()
+                return {'msg': 'Could not find who to subject field. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
 
+
     # checkbox may reply set to unchecked
-    try_attempt = 0
-    while try_attempt != max_try_attempts:
+    if this_msg_can_be_replied == False:
         try:
-            checkbox_may_reply = browser.find_element_by_id("s_m_Content_Content_RepliesToThreadOrExistingMessageAllowedChk")
-            if checkbox_may_reply.is_selected():
-                checkbox_may_reply.click()
-                try_attempt = max_try_attempts
-        except NoSuchElementException:
-            if try_attempt == max_try_attempts - 1:
-                error_msg = f"{now}: FAG_eval_rpa crashed when trying to unclick may reply in lectio send message page"
-                log.log("FAG_eval_rpa crashed when trying to unclick may reply in lectio send message page")
-                send_sms.sms_troubleshooters(error_msg)
-                sys.exit()
-            try_attempt = try_attempt + 1
+            checkbox_may_reply = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageAllowReply_cb")
+            checkbox_may_reply.click()
+        except:
+            return {'msg': 'Could not find checkbox: may reply', 'success': False}
+        try_attempt = 0
+        while try_attempt != max_try_attempts:
+            try:
+                checkbox_may_reply = browser.find_element("id", "s_m_Content_Content_RepliesToThreadOrExistingMessageAllowedChk")
+                if checkbox_may_reply.is_selected():
+                    checkbox_may_reply.click()
+                    try_attempt = max_try_attempts
+            except NoSuchElementException:
+                if try_attempt == max_try_attempts - 1:
+                    return {'msg': 'Could not find may replied checkbox. May be problems loading lectio.dk', 'success': False}
+                try_attempt = try_attempt + 1
+
 
     # insert message in "message field"
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            input_message = browser.find_element_by_id("s_m_Content_Content_CreateThreadEditMessageContent_TbxNAME_tb")
-            input_message.send_keys(this_msg)
+            input_message = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageContent_TbxNAME_tb")
+            input_message.send_keys(msg)
             try_attempt = max_try_attempts
         except NoSuchElementException:
             if try_attempt == max_try_attempts - 1:
-                error_msg = f"{now}: FAG_eval_rpa crashed when trying to type the message in lectio send message page"
-                log.log("FAG_eval_rpa crashed when trying to type the message in lectio send message page")
-                send_sms.sms_troubleshooters(error_msg)
-                sys.exit()
+                return {'msg': 'Could not insert message in message field. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
 
     # click submit button
-
     try_attempt = 0
-    while try_attempt != max_try_attempts and disbale_send is False:
+    while try_attempt != max_try_attempts:
         try:
             pass
-            button_submit = browser.find_element_by_id("s_m_Content_Content_CreateThreadEditMessageOkBtn")
+            button_submit = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageOkBtn")
             button_submit.click()
             try_attempt = max_try_attempts
         except NoSuchElementException:
             if try_attempt == max_try_attempts - 1:
-                error_msg = f"{now}: FAG_eval_rpa crashed when trying to click the submit button in lectio send message page"
-                log.log("FAG_eval_rpa crashed when trying to click the submit button in lectio send message page")
-                send_sms.sms_troubleshooters(error_msg)
-                sys.exit()
+                return {'msg': 'Could not click submit button. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
+
+    return {'msg': f'message sent successful to: {input_receiver_name}', 'success': True}
 
 
 def get_webpage(this_webpage) -> bs4.BeautifulSoup:
@@ -172,7 +192,7 @@ def get_webpage(this_webpage) -> bs4.BeautifulSoup:
     soup = bs4.BeautifulSoup(page.content, "html.parser")
     return soup
 
-def search_webpage_for_schools(school_name=""): # -> List[str, int]:
+def search_webpage_for_schools(school_name="") -> dict:
     page = get_webpage("https://www.lectio.dk/lectio/login_list.aspx")
 
     this_list :list = []
@@ -191,8 +211,6 @@ def search_webpage_for_schools(school_name=""): # -> List[str, int]:
 
     this_dict.update(this_list)
     this_dict = clean_for_json(this_dict)
-
-    json_object = json.dumps(this_dict, indent=4)
     return this_dict
 
 def clean_for_json(this_dict :str) -> str:
@@ -208,7 +226,6 @@ def clean_for_json(this_dict :str) -> str:
     this_dict = this_dict.replace("}}", "}")
     this_dict = this_dict.replace("{{", "{")
     this_dict = this_dict.replace("}}", "}")
-    #this_dict = this_dict.replace("'", '"')
     return  this_dict
 
 def get_digits_from_string(string :str) -> str:
