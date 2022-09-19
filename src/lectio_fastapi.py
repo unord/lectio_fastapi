@@ -38,13 +38,13 @@ def get_school_id(lectio_school_name: SchoolName):
     lectio_school_id_results = lectio.lectio_search_webpage_for_schools(lectio_school_name.lectio_school_name)
     return lectio_school_id_results
 
-@app.get("/message_send/{lectio_school_id, lectio_user, lectio_password}")
+@app.get("/test_login/{lectio_school_id, lectio_user, lectio_password}")
 def test_login(lectio_school_id: int, lectio_user: str, lectio_password: str):
     browser = lectio.get_webdriver()
     lectio_login_result = lectio.lectio_login(lectio_school_id, lectio_user, lectio_password, browser)
     return lectio_login_result
 
-@app.post("/message_send/")
+@app.post("/test_login/")
 def test_login(lectio_test_login: TestLogin):
     browser = lectio.get_webdriver()
     lectio_login_result = lectio.lectio_login(lectio_test_login.lectio_school_id, lectio_test_login.lectio_user, lectio_test_login.lectio_password, browser)
