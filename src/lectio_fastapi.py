@@ -1,7 +1,16 @@
 from fastapi import FastAPI
-from starlette.responses import JSONResponse
+from pydantic import BaseModel
 from . import lectio
 app = FastAPI()
+
+
+class SendMsg(BaseModel):
+    username: str
+    password: str
+    msg: str
+    send_to: str
+    subject: str
+    this_msg_can_be_replied: bool
 
 
 @app.get("/")
@@ -15,8 +24,8 @@ def get_school_id():
 
 @app.post("/school_ids/{lectio_school_name}")
 def get_school_id(lectio_school_name: str):
-    json_object = lectio.lectio_search_webpage_for_schools(lectio_school_name)
-    return JSONResponse(content=json_object)
+    lectio_school_id_results = lectio.lectio_search_webpage_for_schools(lectio_school_name)
+    return lectio_school_id_results
 
 
 @app.post("/message_send/{lectio_school_id, lectio_user, lectio_password}")
@@ -30,7 +39,7 @@ def send_msg():
     return {'msg': 'message_send function for lectio', 'success': True}
 
 @app.post("/message_send/{lectio_school_id, lectio_user, lectio_password, send_to, subject, msg, msg_can_be_replied}")
-def send_msg(lectio_school_id: int, lectio_user: str, lectio_password: str, send_to :str, subject: str, msg: str, msg_can_be_replied: bool):
+def send_msg(send_msg: SendMsg):
     browser = lectio.get_webdriver()
     lectio_login_result = lectio.lectio_login(lectio_school_id, lectio_user, lectio_password,browser)
     if lectio_login_result['success']:
