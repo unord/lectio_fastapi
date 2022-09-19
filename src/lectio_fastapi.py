@@ -29,7 +29,7 @@ def get_school_id():
 @app.post("/school_ids/{lectio_school_name}")
 def get_school_id(lectio_school_name: GetSchoolId):
     lectio_school_id_results = lectio.lectio_search_webpage_for_schools(lectio_school_name)
-    return lectio_school_id_results
+    return lectio_school_name
 
 
 @app.post("/message_send/{lectio_school_id, lectio_user, lectio_password}")
@@ -54,6 +54,7 @@ def send_msg():
 
 def main():
     pass
+
 
 if __name__ == "__main__":
     main()
