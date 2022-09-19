@@ -45,9 +45,9 @@ def send_msg():
 @app.post("/message_send/{lectio_school_id, lectio_user, lectio_password, send_to, subject, msg, msg_can_be_replied}")
 def send_msg(send_msg: SendMsg):
     browser = lectio.get_webdriver()
-    lectio_login_result = lectio.lectio_login(lectio_school_id, lectio_user, lectio_password,browser)
+    lectio_login_result = lectio.lectio_login(SendMsg.lectio_school_id, SendMsg.lectio_user, SendMsg.lectio_password, browser)
     if lectio_login_result['success']:
-        lectio_send_msg_result = lectio.lectio_send_msg(send_to, subject, msg, msg_can_be_replied, lectio_school_id, browser)
+        lectio_send_msg_result = lectio.lectio_send_msg(SendMsg.send_to, SendMsg.subject, SendMsg.msg, SendMsg.msg_can_be_replied, SendMsg.lectio_school_id, browser)
         return lectio_send_msg_result
     else:
         return {'msg': 'Login failed, wrong username, password and school_id combination ', 'success': False}
