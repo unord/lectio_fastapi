@@ -4,14 +4,7 @@ from . import lectio
 app = FastAPI()
 
 
-class SendMsg(BaseModel):
-    lectio_school_id: int
-    lectio_user: str
-    lectio_password: str
-    send_to: str
-    subject: str
-    msg: str
-    msg_can_be_replied: bool
+
 
 class GetSchoolId(BaseModel):
     lectio_school_name: str
