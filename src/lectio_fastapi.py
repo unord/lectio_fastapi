@@ -12,6 +12,9 @@ class SendMsg(BaseModel):
     subject: str
     this_msg_can_be_replied: bool
 
+class GetSchoolId(BaseModel):
+    lectio_school_name: str
+
 
 @app.get("/")
 def read_root():
@@ -23,7 +26,7 @@ def get_school_id():
     return {'msg': 'get_school_id function gets a school id that contains the string', 'success': True}
 
 @app.post("/school_ids/{lectio_school_name}")
-def get_school_id(lectio_school_name: str):
+def get_school_id(lectio_school_name: GetSchoolId):
     lectio_school_id_results = lectio.lectio_search_webpage_for_schools(lectio_school_name)
     return lectio_school_id_results
 
