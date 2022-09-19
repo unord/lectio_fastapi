@@ -33,7 +33,6 @@ def lectio_send_msg(lectio_school_id: int, lectio_user: str, lectio_password: st
     payload = payload + '", "msg_can_be_replied": "' + str(msg_can_be_replied) + '"}'
 
     resp_post = requests.post(url, data=payload, headers=headers)
-    print(resp_post.text)
     return resp_post
 
 def main():
@@ -44,7 +43,7 @@ def main():
     subject = 'test subject'
     msg = 'test msg'
     msg_can_be_replied = False
-    print(lectio_send_msg(lectio_school_id, lectio_user, lectio_password, send_to, subject, msg, msg_can_be_replied))
+    print(lectio_send_msg(lectio_school_id, lectio_user, lectio_password, send_to, subject, msg, msg_can_be_replied).text)
 
 
 
