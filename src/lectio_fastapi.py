@@ -29,8 +29,9 @@ def get_school_id(lectio_school_name: str):
 
 @app.post("/school_ids/")
 def get_school_id(lectio_school_name: SchoolName):
-    #lectio_school_id_results = lectio.lectio_search_webpage_for_schools(lectio_school_name)
-    return lectio_school_name
+    print(lectio_school_name.lectio_school_name)
+    lectio_school_id_results = lectio.lectio_search_webpage_for_schools(lectio_school_name.lectio_school_name)
+    return lectio_school_id_results
 
 
 @app.post("/message_send/{lectio_school_id, lectio_user, lectio_password}")
