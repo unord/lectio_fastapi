@@ -7,7 +7,7 @@ from selenium import webdriver
 import os
 
 
-def clean_for_json(this_dict :str) -> str:
+def clean_for_json(this_dict: str) -> str:
     this_dict = str(this_dict).replace("(", '').replace(")", '')
     this_dict = "{'schools': [" + this_dict + "]}"
     this_dict = this_dict.replace("'id'", "{'id")
@@ -20,14 +20,16 @@ def clean_for_json(this_dict :str) -> str:
     this_dict = this_dict.replace("}}", "}")
     this_dict = this_dict.replace("{{", "{")
     this_dict = this_dict.replace("}}", "}")
-    return  this_dict
+    return this_dict
 
-def get_digits_from_string(string :str) -> str:
+
+def get_digits_from_string(string: str) -> str:
     digits = ""
     for c in string:
         if c.isdigit():
             digits = digits + c
     return digits
+
 
 def get_webdriver() -> webdriver:
     chrome_options = webdriver.ChromeOptions()
@@ -38,23 +40,25 @@ def get_webdriver() -> webdriver:
     browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"))
     return browser
 
+
 def get_webpage(this_webpage) -> bs4.BeautifulSoup:
     page = requests.get(this_webpage)
     soup = bs4.BeautifulSoup(page.content, "html.parser")
     return soup
 
-def lectio_login(school_id :int, lectio_user :str, lectio_password :str, browser :webdriver) -> dict:
+
+def lectio_login(school_id: int, lectio_user: str, lectio_password: str, browser: webdriver) -> dict:
     max_try_attempts = 100
 
     this_url = f"https://www.lectio.dk/lectio/{school_id}/login.aspx"
 
-    #go to login page
+    # go to login page
     try:
         browser.get(this_url)
-    except:
-        return {'msg': 'Could not load page', 'success': False}
+    except Exception as e:
+        return {'msg': f'Could not load page. Exception: {e}', 'success': False}
 
-    #insert username in lectio login, user field
+    # insert username in lectio login, user field
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
@@ -66,7 +70,7 @@ def lectio_login(school_id :int, lectio_user :str, lectio_password :str, browser
                 return {'msg': 'Could not insert username on login page. Reason maybe webpage is not being loaded correctly.', 'success': False}
             try_attempt += 1
 
-    #insert password in lectio login page, password field
+    # insert password in lectio login page, password field
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
@@ -95,9 +99,10 @@ def lectio_login(school_id :int, lectio_user :str, lectio_password :str, browser
         current_user = browser.find_element("id", "s_m_LoginOutLink").text
         return {'msg': 'Login successful', 'success': True}
     except NoSuchElementException as e:
-        return {'msg': 'Login failed, wrong username, password and school_id combination ', 'success': False}
+        return {'msg': f'Login failed, wrong username, password and school_id combination. Exceptiom: {e} ', 'success': False}
 
-def lectio_send_msg(send_to :str, subject :str, msg :str, this_msg_can_be_replied :bool, lectio_school_id :int, browser :webdriver) -> dict:
+
+def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replied: bool, lectio_school_id: int, browser: webdriver) -> dict:
     max_try_attempts = 100
     main_page_url = f"https://www.lectio.dk/lectio/{lectio_school_id}/forside.aspx"
 
@@ -108,7 +113,6 @@ def lectio_send_msg(send_to :str, subject :str, msg :str, this_msg_can_be_replie
         print(e)
         return {'msg': 'Could not load page', 'success': False}
 
-
     # go to lectio new message page
     time.sleep(1)
     try:
@@ -118,14 +122,12 @@ def lectio_send_msg(send_to :str, subject :str, msg :str, this_msg_can_be_replie
         print(e)
         return {'msg': 'Could not find link: Beskeder', 'success': False}
 
-
     # go to lectio message page
     try:
         link_beskeder = browser.find_element("xpath", '/html/body/div[1]/form[2]/section/div[3]/div/div[3]/div[2]/div[1]/div[1]/a')
         link_beskeder.click()
-    except:
-        return {'msg': 'Could not find link: Ny besked', 'success': False}
-
+    except Exception as e:
+        return {'msg': f'Could not find link: Ny besked. Exception: {e}', 'success': False}
 
     # insert class in "to field"
     try_attempt = 0
@@ -156,8 +158,6 @@ def lectio_send_msg(send_to :str, subject :str, msg :str, this_msg_can_be_replie
                 return {'msg': 'Could not find who the msg is being sent to. May be problems loading lectio.dk', 'success': False}
             try_attempt += 1
 
-
-
     # insert message in "subject field"
     try_attempt = 0
     while try_attempt != max_try_attempts:
@@ -170,14 +170,12 @@ def lectio_send_msg(send_to :str, subject :str, msg :str, this_msg_can_be_replie
                 return {'msg': 'Could not find who to subject field. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
 
-
     # checkbox may reply
-    if this_msg_can_be_replied == False:
+    if this_msg_can_be_replied is False:
         try:
             checkbox_may_reply = browser.find_element("id", "s_m_Content_Content_RepliesToThreadOrExistingMessageAllowedChk").click()
-        except:
-            return {'msg': 'Could not find checkbox: may reply', 'success': False}
-
+        except Exception as e:
+            return {'msg': f'Could not find checkbox: may reply. Exception: {e}', 'success': False}
 
     # insert message in "message field"
     try_attempt = 0
@@ -210,9 +208,8 @@ def lectio_send_msg(send_to :str, subject :str, msg :str, this_msg_can_be_replie
 def lectio_search_webpage_for_schools(school_name="") -> dict:
     page = get_webpage("https://www.lectio.dk/lectio/login_list.aspx")
 
-    this_list :list = []
-    this_dict :dict = {}
-
+    this_list: list = []
+    this_dict: dict = {}
 
     raw_schools = page.find_all('a', href=True)
     for item in raw_schools:
@@ -222,7 +219,7 @@ def lectio_search_webpage_for_schools(school_name="") -> dict:
                 this_school = str(item).split(">")[1:]
                 this_school = str(this_school)[:-9]
                 this_school = this_school[2:]
-                this_list.append([('id' , str(this_id)), ('school_name' , this_school)])
+                this_list.append([('id', str(this_id)), ('school_name', this_school)])
 
     this_dict.update(this_list)
     this_dict = clean_for_json(this_dict)
@@ -235,5 +232,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
