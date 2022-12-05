@@ -107,6 +107,12 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     main_page_url = f"https://www.lectio.dk/lectio/{lectio_school_id}/forside.aspx"
 
     msg = msg.replace("##n", "\n")
+    msg = msg.replace("##ae", "æ")
+    msg = msg.replace("##oe", "ø")
+    msg = msg.replace("##aa", "å")
+    msg = msg.replace("##AE", "Æ")
+    msg = msg.replace("##OE", "Ø")
+    msg = msg.replace("##AA", "Å")
 
     # go to main page
     try:
