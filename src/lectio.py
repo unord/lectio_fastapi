@@ -106,6 +106,8 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     max_try_attempts = 100
     main_page_url = f"https://www.lectio.dk/lectio/{lectio_school_id}/forside.aspx"
 
+    msg = msg.replace("##n", "\n")
+
     # go to main page
     try:
         browser.get(main_page_url)
