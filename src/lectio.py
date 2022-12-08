@@ -2,6 +2,7 @@ import time
 import requests
 import bs4
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 import os
@@ -162,7 +163,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     input_receiver_name = ""
     while try_attempt != max_try_attempts:
         try:
-            input_receiver_name = browser.find_element("xpath", "/html/body/div[1]/form[2]/section/div[3]/section/div[2]/table/tbody/tr[1]/td/table/tbody/tr[1]/td/div/table/tbody/tr/td[2]/span").text
+            input_receiver_name = browser.find_element(By.CSS_SELECTOR, "#s_m_Content_Content_CreateThreadEditMessageGV > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2) > span:nth-child(1)").text
             if input_receiver_name != send_to or input_receiver_name == "":
                 return {'msg': f'Value of who is being sent to, is not the same as the receiver found on lectio.dk. User found by lectio.dk: {input_receiver_name}', 'success': False}
             try_attempt = max_try_attempts
