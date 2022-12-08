@@ -48,6 +48,7 @@ def get_webpage(this_webpage) -> bs4.BeautifulSoup:
 
 
 def lectio_login(school_id: int, lectio_user: str, lectio_password: str, browser: webdriver) -> dict:
+    print(f'Logging in to school id: {school_id}')
     max_try_attempts = 100
 
     this_url = f"https://www.lectio.dk/lectio/{school_id}/login.aspx"
@@ -57,6 +58,7 @@ def lectio_login(school_id: int, lectio_user: str, lectio_password: str, browser
         browser.get(this_url)
     except Exception as e:
         return {'msg': f'Could not load page. Exception: {e}', 'success': False}
+    print('Username inserted')
 
     # insert username in lectio login, user field
     try_attempt = 0
@@ -81,7 +83,7 @@ def lectio_login(school_id: int, lectio_user: str, lectio_password: str, browser
             if try_attempt == max_try_attempts-1:
                 return {'msg': 'Could not insert password on login page. Reason maybe webpage is not being loaded correctly.', 'success': False}
             try_attempt += 1
-
+    print('Password inserted')
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
@@ -92,20 +94,22 @@ def lectio_login(school_id: int, lectio_user: str, lectio_password: str, browser
             if try_attempt == max_try_attempts-1:
                 return {'msg': 'Could not push the login button. Reason maybe webpage is not being loaded correctly.', 'success': False}
             try_attempt = try_attempt + 1
-
+    print('Login button clicked')
     time.sleep(1)
     browser.get(f"https://www.lectio.dk/lectio/{school_id}/forside.aspx")
     try:
         current_user = browser.find_element("id", "s_m_LoginOutLink").text
+        print(f'Logged in as: {current_user}')
         return {'msg': 'Login successful', 'success': True}
     except NoSuchElementException as e:
+        print(f'Could not find current user. Exception: {e}')
         return {'msg': f'Login failed, wrong username, password and school_id combination. Exceptiom: {e} ', 'success': False}
 
 
 def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replied: bool, lectio_school_id: int, browser: webdriver) -> dict:
     max_try_attempts = 100
     main_page_url = f"https://www.lectio.dk/lectio/{lectio_school_id}/forside.aspx"
-
+    print(f'Going to main page: {main_page_url}')
     msg = msg.replace("##n", "\n")
     msg = msg.replace("##ae", "æ")
     msg = msg.replace("##oe", "ø")
@@ -120,7 +124,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     except Exception as e:
         print(e)
         return {'msg': 'Could not load page', 'success': False}
-
+    print('Main page loaded')
     # go to lectio new message page
     time.sleep(1)
     try:
@@ -136,7 +140,8 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
         link_beskeder.click()
     except Exception as e:
         return {'msg': f'Could not find link: Ny besked. Exception: {e}', 'success': False}
-
+    print('Message page loaded')
+    print('Inserting message')
     # insert class in "to field"
     try_attempt = 0
     while try_attempt != max_try_attempts:
@@ -196,6 +201,8 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             if try_attempt == max_try_attempts - 1:
                 return {'msg': 'Could not insert message in message field. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
+    print('Message inserted')
+    print('Sending message')
 
     # click submit button
     try_attempt = 0
@@ -209,7 +216,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             if try_attempt == max_try_attempts - 1:
                 return {'msg': 'Could not click submit button. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
-
+    print('Message sent')
     return {'msg': f'message sent successful to: {input_receiver_name}', 'success': True}
 
 
