@@ -156,7 +156,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             if try_attempt == max_try_attempts - 1:
                 return {'msg': 'Could not find who to send to. May be problems loading lectio.dk', 'success': False}
             try_attempt += 1
-
+    print('Class inserted')
     # test to if receiver is correct
     try_attempt = 0
     input_receiver_name = ""
@@ -171,6 +171,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
                 return {'msg': 'Could not find who the msg is being sent to. May be problems loading lectio.dk', 'success': False}
             try_attempt += 1
 
+    print('Receiver is correct')
     # insert message in "subject field"
     try_attempt = 0
     while try_attempt != max_try_attempts:
@@ -183,6 +184,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
                 return {'msg': 'Could not find who to subject field. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
 
+    print('Subject inserted')
     # checkbox may reply
     if this_msg_can_be_replied is False:
         try:
@@ -190,6 +192,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
         except Exception as e:
             return {'msg': f'Could not find checkbox: may reply. Exception: {e}', 'success': False}
 
+    print('Checkbox may reply processed')
     # insert message in "message field"
     try_attempt = 0
     while try_attempt != max_try_attempts:
