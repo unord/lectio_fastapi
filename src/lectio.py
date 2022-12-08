@@ -1,6 +1,7 @@
 import time
 import requests
 import bs4
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -40,6 +41,11 @@ def get_webdriver() -> webdriver:
     chrome_options.add_argument("--no-sandbox")
     browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"))
     return browser
+
+def get_webdriver_local() -> webdriver:
+    options = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    return driver
 
 
 def get_webpage(this_webpage) -> bs4.BeautifulSoup:

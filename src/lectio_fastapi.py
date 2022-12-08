@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from . import lectio
 app = FastAPI()
 
+local = False
 
 class SendMsg(BaseModel):
     lectio_school_id: int
@@ -62,7 +63,10 @@ def send_msg(lectio_school_id: int, lectio_user: str, lectio_password: str, send
 
 @app.post("/message_send/")
 def send_msg(send_msg: SendMsg):
-    browser = lectio.get_webdriver()
+    if local == True:
+        browser = lectio.get_webdriver_local()
+    else:
+        browser = lectio.get_webdriver()
     lectio_login_result = lectio.lectio_login(send_msg.lectio_school_id, send_msg.lectio_user, send_msg.lectio_password, browser)
     if lectio_login_result['success']:
         lectio_send_msg_result = lectio.lectio_send_msg(send_msg.send_to, send_msg.subject, send_msg.msg, send_msg.msg_can_be_replied, send_msg.lectio_school_id, browser)
