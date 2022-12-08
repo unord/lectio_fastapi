@@ -100,7 +100,7 @@ def lectio_login(school_id: int, lectio_user: str, lectio_password: str, browser
     browser.get(f"https://www.lectio.dk/lectio/{school_id}/forside.aspx")
     try:
         current_user = browser.find_element("id", "s_m_LoginOutLink").text
-        print(f'Logged in as: {current_user}')
+        print(f'Logged in as: {lectio_user}')
         return {'msg': 'Login successful', 'success': True}
     except NoSuchElementException as e:
         print(f'Could not find current user. Exception: {e}')
@@ -134,6 +134,8 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     except Exception as e:
         print(e)
         return {'msg': 'Could not find link: Beskeder', 'success': False}
+    print('Link: "Beskeder" clicked')
+
 
     # go to lectio message page
     try:
@@ -158,6 +160,8 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
                 return {'msg': 'Could not find who to send to. May be problems loading lectio.dk', 'success': False}
             try_attempt += 1
     print('Class inserted')
+
+    '''
     # test to if receiver is correct
     try_attempt = 0
     input_receiver_name = ""
@@ -173,6 +177,8 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             try_attempt += 1
 
     print('Receiver is correct')
+    '''
+
     # insert message in "subject field"
     try_attempt = 0
     while try_attempt != max_try_attempts:
