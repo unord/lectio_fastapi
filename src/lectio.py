@@ -229,7 +229,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             try_attempt = try_attempt + 1
 
     while current_url == browser.current_url:
-        print('Waiting for page to load')
+        print('Waiting for message to be sent')
         time.sleep(1)
 
     print('Message sent')
