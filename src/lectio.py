@@ -226,6 +226,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             if try_attempt == max_try_attempts - 1:
                 return {'msg': 'Could not click submit button. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
+    time.sleep(3)
     print('Message sent')
     return {'msg': f'message sent successful to: {send_to}', 'success': True}
 
