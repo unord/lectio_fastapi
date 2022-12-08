@@ -215,6 +215,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     print('Sending message')
 
     # click submit button
+    current_url = browser.current_url
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
@@ -226,7 +227,11 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             if try_attempt == max_try_attempts - 1:
                 return {'msg': 'Could not click submit button. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
-    time.sleep(3)
+
+    while current_url == browser.current_url:
+        print('Waiting for page to load')
+        time.sleep(1)
+
     print('Message sent')
     return {'msg': f'message sent successful to: {send_to}', 'success': True}
 
