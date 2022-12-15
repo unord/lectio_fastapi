@@ -24,6 +24,16 @@ def clean_for_json(this_dict: str) -> str:
     this_dict = this_dict.replace("}}", "}")
     return this_dict
 
+def clean_string_for_json_replace_dk(this_string: str) -> str:
+    this_string = this_string.replace("##n", "\n")
+    this_string = this_string.replace("##ae", "æ")
+    this_string = this_string.replace("##oe", "ø")
+    this_string = this_string.replace("##aa", "å")
+    this_string = this_string.replace("##AE", "Æ")
+    this_string = this_string.replace("##OE", "Ø")
+    this_string = this_string.replace("##AA", "Å")
+    return this_string
+
 
 def get_digits_from_string(string: str) -> str:
     digits = ""
@@ -117,20 +127,9 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     max_try_attempts = 100
     main_page_url = f"https://www.lectio.dk/lectio/{lectio_school_id}/forside.aspx"
     print(f'Going to main page: {main_page_url}')
-    msg = msg.replace("##n", "\n")
-    msg = msg.replace("##ae", "æ")
-    msg = msg.replace("##oe", "ø")
-    msg = msg.replace("##aa", "å")
-    msg = msg.replace("##AE", "Æ")
-    msg = msg.replace("##OE", "Ø")
-    msg = msg.replace("##AA", "Å")
-    subject = subject.replace("##n", "\n")
-    subject = subject.replace("##ae", "æ")
-    subject = subject.replace("##oe", "ø")
-    subject = subject.replace("##aa", "å")
-    subject = subject.replace("##AE", "Æ")
-    subject = subject.replace("##OE", "Ø")
-    subject = subject.replace("##AA", "Å")
+
+    msg = clean_string_for_json_replace_dk(msg)
+    subject = clean_string_for_json_replace_dk(subject)
 
     # go to main page
     try:
@@ -247,6 +246,19 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
 
     print('Message sent')
     return {'msg': f'message sent successful to: {send_to}', 'success': True}
+
+
+def download_teacher_information(lectio_school_id: int, browser: webdriver) -> dict:
+
+
+    browser.get('https://www.lectio.dk/lectio/234/stamdata/stamdata_chooseentity.aspx?type=editteacher')
+    time.sleep(1)
+    # with selenium download file
+    try:
+        dowload_link = browser.find_element("By.ID", "m_Content_BtnExportLaerer").click()
+    except Exception as e:
+        return {'msg': f'Could not find download link. Exception: {e}', 'success': False}
+
 
 
 def lectio_search_webpage_for_schools(school_name="") -> dict:
