@@ -124,6 +124,13 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     msg = msg.replace("##AE", "Æ")
     msg = msg.replace("##OE", "Ø")
     msg = msg.replace("##AA", "Å")
+    subject = subject.replace("##n", "\n")
+    subject = subject.replace("##ae", "æ")
+    subject = subject.replace("##oe", "ø")
+    subject = subject.replace("##aa", "å")
+    subject = subject.replace("##AE", "Æ")
+    subject = subject.replace("##OE", "Ø")
+    subject = subject.replace("##AA", "Å")
 
     # go to main page
     try:
