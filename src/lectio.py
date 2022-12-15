@@ -128,6 +128,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     main_page_url = f"https://www.lectio.dk/lectio/{lectio_school_id}/forside.aspx"
     print(f'Going to main page: {main_page_url}')
 
+    send_to = clean_string_for_json_replace_dk(send_to)
     msg = clean_string_for_json_replace_dk(msg)
     subject = clean_string_for_json_replace_dk(subject)
 
