@@ -236,10 +236,11 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            pass
             button_submit = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageOkBtn")
             button_submit.click()
             try_attempt = max_try_attempts
+            print('Submit button clicked')
+            time.sleep(6)
         except NoSuchElementException as e:
             if try_attempt == max_try_attempts - 1:
                 print(f"Could not click submit button. May be problems loading lectio.dk. exception: {e}")
