@@ -124,7 +124,7 @@ def lectio_login(school_id: int, lectio_user: str, lectio_password: str, browser
 
 
 def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replied: bool, lectio_school_id: int, browser: webdriver) -> dict:
-    max_try_attempts = 100
+    max_try_attempts = 50
     main_page_url = f"https://www.lectio.dk/lectio/{lectio_school_id}/forside.aspx"
     print(f'Going to main page: {main_page_url}')
 
@@ -243,7 +243,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
 
     try_attempt = 0
     while current_url == browser.current_url and try_attempt != max_try_attempts:
-        print(f'Waiting for message to be sent. Attempt: {try_attempt}')
+        print(f'Waiting for message to be sent. Attempt: {try_attempt}, current url: {browser.current_url}')
         try_attempt += 1
         time.sleep(1)
 
