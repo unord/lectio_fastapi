@@ -168,8 +168,9 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             input_class_name.send_keys(Keys.ARROW_DOWN)
             input_class_name.send_keys(Keys.ENTER)
             try_attempt = max_try_attempts
-        except NoSuchElementException:
+        except NoSuchElementException as e:
             if try_attempt == max_try_attempts - 1:
+                print(f"Could not find who to send to. May be problems loading lectio.dk. Exception: {e}")
                 return {'msg': 'Could not find who to send to. May be problems loading lectio.dk', 'success': False}
             try_attempt += 1
     print('Class inserted')
@@ -199,8 +200,9 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             input_subject = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageTitle_tb")
             input_subject.send_keys(subject)
             try_attempt = max_try_attempts
-        except NoSuchElementException:
+        except NoSuchElementException as e:
             if try_attempt == max_try_attempts - 1:
+                print(f"Could not find who to subject field. exception: {e}")
                 return {'msg': 'Could not find who to subject field. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
 
@@ -210,6 +212,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
         try:
             checkbox_may_reply = browser.find_element("id", "s_m_Content_Content_RepliesToThreadOrExistingMessageAllowedChk").click()
         except Exception as e:
+            print(f"Could not find checkbox: may reply. exception: {e}")
             return {'msg': f'Could not find checkbox: may reply. Exception: {e}', 'success': False}
 
     print('Checkbox may reply processed')
@@ -220,8 +223,9 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             input_message = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageContent_TbxNAME_tb")
             input_message.send_keys(msg)
             try_attempt = max_try_attempts
-        except NoSuchElementException:
+        except NoSuchElementException as e:
             if try_attempt == max_try_attempts - 1:
+                print(f"Could not insert message in message field. May be problems loading lectio.dk. exception: {e}")
                 return {'msg': 'Could not insert message in message field. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
     print('Message inserted')
@@ -236,8 +240,9 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             button_submit = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageOkBtn")
             button_submit.click()
             try_attempt = max_try_attempts
-        except NoSuchElementException:
+        except NoSuchElementException as e:
             if try_attempt == max_try_attempts - 1:
+                print(f"Could not click submit button. May be problems loading lectio.dk. exception: {e}")
                 return {'msg': 'Could not click submit button. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
 
