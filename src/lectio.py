@@ -247,11 +247,41 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
                 return {'msg': 'Could not click submit button. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
 
+    max_try_attempts = 10
     try_attempt = 0
     while current_url == browser.current_url and try_attempt != max_try_attempts:
         print(f'Waiting for message to be sent. Attempt: {try_attempt}, current url: {browser.current_url}')
         try_attempt += 1
         time.sleep(1)
+        print('Inserting class again and sending message again')
+        # insert class in "to field"
+        try_attempt = 0
+        while try_attempt != max_try_attempts:
+            try:
+                input_class_name = browser.find_element("id", "s_m_Content_Content_addRecipientDD_inp")
+                input_class_name.send_keys(send_to)
+                input_class_name.send_keys(Keys.ARROW_DOWN)
+                input_class_name.send_keys(Keys.ARROW_DOWN)
+                input_class_name.send_keys(Keys.ENTER)
+                try_attempt = max_try_attempts
+            except NoSuchElementException as e:
+                if try_attempt == max_try_attempts - 1:
+                    print(f"Could not find who to send to. May be problems loading lectio.dk. Exception: {e}")
+                    return {'msg': 'Could not find who to send to. May be problems loading lectio.dk', 'success': False}
+                try_attempt += 1
+            try:
+                button_submit = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageOkBtn")
+                button_submit.click()
+                try_attempt = max_try_attempts
+                print('Submit button clicked')
+                time.sleep(6)
+            except NoSuchElementException as e:
+                if try_attempt == max_try_attempts - 1:
+                    print(f"Could not click submit button. May be problems loading lectio.dk. exception: {e}")
+                    return {'msg': 'Could not click submit button. May be problems loading lectio.dk', 'success': False}
+                try_attempt = try_attempt + 1
+
+        print('Class inserted')
 
     print('Message sent')
     return {'msg': f'message sent successful to: {send_to}', 'success': True}
