@@ -249,6 +249,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             try_attempt = try_attempt + 1
 
     print(f'Message sent to: {send_to}')
+    print('****************************************************************************************')
     return {'msg': f'message sent successful to: {send_to}', 'success': True}
 
 
