@@ -229,7 +229,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
                 print(f"Could not insert message in message field. May be problems loading lectio.dk. exception: {e}")
                 return {'msg': 'Could not insert message in message field. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
-    print('Message inserted')
+    print(f'Message inserted. Message: {msg}')
     print('Sending message')
 
     # click submit button
@@ -248,11 +248,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
                 return {'msg': 'Could not click submit button. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
 
-
-
-        print('Class inserted')
-
-    print('Message sent')
+    print(f'Message sent to: {send_to}')
     return {'msg': f'message sent successful to: {send_to}', 'success': True}
 
 
