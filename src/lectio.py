@@ -1,3 +1,4 @@
+from decouple import config
 import time
 import requests
 import bs4
@@ -173,7 +174,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
                 print(f"Could not find who to send to. May be problems loading lectio.dk. Exception: {e}")
                 return {'msg': 'Could not find who to send to. May be problems loading lectio.dk', 'success': False}
             try_attempt += 1
-    print('Class inserted')
+    print(f'Class inserted. Class: {send_to}')
 
     '''
     # test to if receiver is correct
@@ -206,7 +207,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
                 return {'msg': 'Could not find who to subject field. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
 
-    print('Subject inserted')
+    print(f'Subject inserted. Subject: {subject}')
     # checkbox may reply
     if this_msg_can_be_replied is False:
         try:
@@ -290,7 +291,14 @@ def lectio_search_webpage_for_schools(school_name="") -> dict:
 
 
 def main():
-    pass
+    options = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    lectio_login(config("LECTIO_RPA_SCHOOL_ID"), config("LECTIO_RPA_USER"), config("LECTIO_RPA_PASSWORD"), driver)
+    time.sleep(5)
+    try:
+        lectio_send_msg("cbht1b-infc", "test", "test", "234", "234", driver)
+    except Exception as e:
+        print(e)
 
 
 if __name__ == "__main__":
