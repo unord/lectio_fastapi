@@ -1,3 +1,4 @@
+from decouple import config
 import time
 import requests
 import bs4
@@ -233,6 +234,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     while try_attempt != max_try_attempts:
         try:
             pass
+            #time.sleep(900)   # for test when I dont want to submit
             button_submit = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageOkBtn")
             button_submit.click()
             try_attempt = max_try_attempts
@@ -246,6 +248,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
         time.sleep(1)
 
     print('Message sent')
+
     return {'msg': f'message sent successful to: {send_to}', 'success': True}
 
 
@@ -284,7 +287,15 @@ def lectio_search_webpage_for_schools(school_name="") -> dict:
 
 
 def main():
-    pass
+    options = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    lectio_login(config("LECTIO_RPA_SCHOOL_ID"), config("LECTIO_RPA_USER"), config("LECTIO_RPA_PASSWORD"), driver)
+    time.sleep(5)
+    try:
+        lectio_send_msg("cbht1b-infc", "test", "test", "234", "234", driver)
+    except Exception as e:
+        print(e)
+        time.sleep(900)
 
 
 if __name__ == "__main__":
