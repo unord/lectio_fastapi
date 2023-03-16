@@ -192,7 +192,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     print('Receiver is correct')
     '''
 
-    # insert message in "subject field"
+    # insert message in "subject field"!
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
