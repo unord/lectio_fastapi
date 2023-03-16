@@ -1,3 +1,4 @@
+from decouple import config
 import time
 import requests
 import bs4
@@ -168,11 +169,12 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             input_class_name.send_keys(Keys.ARROW_DOWN)
             input_class_name.send_keys(Keys.ENTER)
             try_attempt = max_try_attempts
-        except NoSuchElementException:
+        except NoSuchElementException as e:
             if try_attempt == max_try_attempts - 1:
+                print(f"Could not find who to send to. May be problems loading lectio.dk. Exception: {e}")
                 return {'msg': 'Could not find who to send to. May be problems loading lectio.dk', 'success': False}
             try_attempt += 1
-    print('Class inserted')
+    print(f'Class inserted. Class: {send_to}')
 
     '''
     # test to if receiver is correct
@@ -199,17 +201,19 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             input_subject = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageTitle_tb")
             input_subject.send_keys(subject)
             try_attempt = max_try_attempts
-        except NoSuchElementException:
+        except NoSuchElementException as e:
             if try_attempt == max_try_attempts - 1:
+                print(f"Could not find who to subject field. exception: {e}")
                 return {'msg': 'Could not find who to subject field. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
 
-    print('Subject inserted')
+    print(f'Subject inserted. Subject: {subject}')
     # checkbox may reply
     if this_msg_can_be_replied is False:
         try:
             checkbox_may_reply = browser.find_element("id", "s_m_Content_Content_RepliesToThreadOrExistingMessageAllowedChk").click()
         except Exception as e:
+            print(f"Could not find checkbox: may reply. exception: {e}")
             return {'msg': f'Could not find checkbox: may reply. Exception: {e}', 'success': False}
 
     print('Checkbox may reply processed')
@@ -220,11 +224,12 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             input_message = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageContent_TbxNAME_tb")
             input_message.send_keys(msg)
             try_attempt = max_try_attempts
-        except NoSuchElementException:
+        except NoSuchElementException as e:
             if try_attempt == max_try_attempts - 1:
+                print(f"Could not insert message in message field. May be problems loading lectio.dk. exception: {e}")
                 return {'msg': 'Could not insert message in message field. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
-    print('Message inserted')
+    print(f'Message inserted. Message: {msg}')
     print('Sending message')
 
     # click submit button
@@ -232,22 +237,19 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            pass
             button_submit = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageOkBtn")
             button_submit.click()
             try_attempt = max_try_attempts
-        except NoSuchElementException:
+            print('Submit button clicked')
+            time.sleep(6)
+        except NoSuchElementException as e:
             if try_attempt == max_try_attempts - 1:
+                print(f"Could not click submit button. May be problems loading lectio.dk. exception: {e}")
                 return {'msg': 'Could not click submit button. May be problems loading lectio.dk', 'success': False}
             try_attempt = try_attempt + 1
 
-    try_attempt = 0
-    while current_url == browser.current_url and try_attempt != max_try_attempts:
-        print(f'Waiting for message to be sent. Attempt: {try_attempt}, current url: {browser.current_url}')
-        try_attempt += 1
-        time.sleep(1)
-
-    print('Message sent')
+    print(f'Message sent to: {send_to}')
+    print('****************************************************************************************')
     return {'msg': f'message sent successful to: {send_to}', 'success': True}
 
 
@@ -286,7 +288,14 @@ def lectio_search_webpage_for_schools(school_name="") -> dict:
 
 
 def main():
-    pass
+    options = webdriver.ChromeOptions()
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    lectio_login(config("LECTIO_RPA_SCHOOL_ID"), config("LECTIO_RPA_USER"), config("LECTIO_RPA_PASSWORD"), driver)
+    time.sleep(5)
+    try:
+        lectio_send_msg("cbht1b-infc", "test", "test", "234", "234", driver)
+    except Exception as e:
+        print(e)
 
 
 if __name__ == "__main__":
