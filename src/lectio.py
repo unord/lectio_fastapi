@@ -143,7 +143,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     # go to lectio new message page
     time.sleep(1)
     try:
-        link_beskeder = browser.find_element(By.ID, 's_m_HeaderContent_subnavigator_ctl12')
+        link_beskeder = browser.find_element(By.PARTIAL_LINK_TEXT, 'Beskeder')
         link_beskeder.click()
     except Exception as e:
         print(e)
@@ -153,7 +153,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
 
     # go to lectio message page
     try:
-        link_beskeder = browser.find_element(By.ID, 's_m_Content_Content_NewMessageLnk')
+        link_beskeder = browser.find_element(By.PARTIAL_LINK_TEXT, 'Ny besked')
         link_beskeder.click()
     except Exception as e:
         return {'msg': f'Could not find link: Ny besked. Exception: {e}', 'success': False}
