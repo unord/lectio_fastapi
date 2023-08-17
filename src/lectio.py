@@ -46,11 +46,11 @@ def get_digits_from_string(string: str) -> str:
 
 def get_webdriver() -> webdriver:
     chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_SHIM")
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_SHIM", None)
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
-    browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"))
+    browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
     return browser
 
 def get_webdriver_local() -> webdriver:
