@@ -143,7 +143,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     # go to lectio new message page
     time.sleep(1)
     try:
-        link_beskeder = browser.find_element(By.XPATH, '/html/body/div[1]/form[2]/section/div[2]/div[2]/nav/div/div[12]/a')
+        link_beskeder = browser.find_element(By.ID, 's_m_HeaderContent_subnavigator_ctl12')
         link_beskeder.click()
     except Exception as e:
         print(e)
