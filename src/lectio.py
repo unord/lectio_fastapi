@@ -143,7 +143,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     # go to lectio new message page
     time.sleep(1)
     try:
-        link_beskeder = browser.find_element("xpath", '/html/body/div[1]/form[2]/section/div[2]/div[2]/nav/div/div[12]/a')
+        link_beskeder = browser.find_element(By.XPATH, '/html/body/div[1]/form[2]/section/div[2]/div[2]/nav/div/div[12]/a')
         link_beskeder.click()
     except Exception as e:
         print(e)
@@ -153,7 +153,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
 
     # go to lectio message page
     try:
-        link_beskeder = browser.find_element("xpath", '/html/body/div[1]/form[2]/section/div[3]/div/div[3]/div[2]/div[1]/div[1]/a')
+        link_beskeder = browser.find_element(By.XPATH, '/html/body/div[1]/form[2]/section/div[3]/div/div[3]/div[2]/div[1]/div[1]/a')
         link_beskeder.click()
     except Exception as e:
         return {'msg': f'Could not find link: Ny besked. Exception: {e}', 'success': False}
@@ -163,7 +163,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            input_class_name = browser.find_element("id", "s_m_Content_Content_addRecipientDD_inp")
+            input_class_name = browser.find_element(By.ID, "s_m_Content_Content_addRecipientDD_inp")
             input_class_name.send_keys(send_to)
             input_class_name.send_keys(Keys.ARROW_DOWN)
             input_class_name.send_keys(Keys.ARROW_DOWN)
@@ -198,7 +198,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            input_subject = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageTitle_tb")
+            input_subject = browser.find_element(By.ID, "s_m_Content_Content_CreateThreadEditMessageTitle_tb")
             input_subject.send_keys(subject)
             try_attempt = max_try_attempts
         except NoSuchElementException as e:
@@ -211,7 +211,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     # checkbox may reply
     if this_msg_can_be_replied is False:
         try:
-            checkbox_may_reply = browser.find_element("id", "s_m_Content_Content_RepliesToThreadOrExistingMessageAllowedChk").click()
+            checkbox_may_reply = browser.find_element(By.ID, "s_m_Content_Content_RepliesToThreadOrExistingMessageAllowedChk").click()
         except Exception as e:
             print(f"Could not find checkbox: may reply. exception: {e}")
             return {'msg': f'Could not find checkbox: may reply. Exception: {e}', 'success': False}
@@ -221,7 +221,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            input_message = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageContent_TbxNAME_tb")
+            input_message = browser.find_element(By.ID, "s_m_Content_Content_CreateThreadEditMessageContent_TbxNAME_tb")
             input_message.send_keys(msg)
             try_attempt = max_try_attempts
         except NoSuchElementException as e:
@@ -237,7 +237,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            button_submit = browser.find_element("id", "s_m_Content_Content_CreateThreadEditMessageOkBtn")
+            button_submit = browser.find_element(By.ID, "s_m_Content_Content_CreateThreadEditMessageOkBtn")
             button_submit.click()
             try_attempt = max_try_attempts
             print('Submit button clicked')
@@ -260,7 +260,7 @@ def download_teacher_information(lectio_school_id: int, browser: webdriver) -> d
     time.sleep(1)
     # with selenium download file
     try:
-        dowload_link = browser.find_element("By.ID", "m_Content_BtnExportLaerer").click()
+        dowload_link = browser.find_element(By.ID, "m_Content_BtnExportLaerer").click()
     except Exception as e:
         return {'msg': f'Could not find download link. Exception: {e}', 'success': False}
 
