@@ -153,7 +153,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
 
     # go to lectio message page
     try:
-        link_beskeder = browser.find_element(By.XPATH, '/html/body/div[1]/form[2]/section/div[3]/div/div[3]/div[2]/div[1]/div[1]/a')
+        link_beskeder = browser.find_element(By.ID, 's_m_Content_Content_NewMessageLnk')
         link_beskeder.click()
     except Exception as e:
         return {'msg': f'Could not find link: Ny besked. Exception: {e}', 'success': False}
