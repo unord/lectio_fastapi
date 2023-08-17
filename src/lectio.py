@@ -116,9 +116,8 @@ def lectio_login(school_id: int, lectio_user: str, lectio_password: str, browser
     time.sleep(1)
     browser.get(f"https://www.lectio.dk/lectio/{school_id}/forside.aspx")
     try:
-        time.sleep(3)
-        current_user = browser.find_element_by_class_name("ls-user-name").text
-        print(f'Logged in as: {lectio_user}')
+        current_user = browser.find_element(By.CLASS_NAME, "ls-user-name").text
+        print(f'Logged in as: {current_user}')
         return {'msg': 'Login successful', 'success': True}
     except NoSuchElementException as e:
         print(f'Could not find current user. Exception: {e}')
