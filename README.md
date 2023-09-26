@@ -9,31 +9,38 @@ Documentation is available at https://lectio-fastapi.herokuapp.com/docs#
 
 
 ## Use POST methode to retrieve data
-### Example in Python3
+### Example for Python3
 ```python
 import requests
-from requests.structures import CaseInsensitiveDict
+import json  # Import the json module
 
-API_ENDPOINT = "https://lectio-fastapi.herokuapp.com/" #link to fastapi
+API_ENDPOINT = "https://lectio-fastapi.herokuapp.com/"  # Link to api
 
-def lectio_send_msg(lectio_school_id: int, lectio_user: str, lectio_password: str, send_to :str, subject: str, msg: str, msg_can_be_replied: bool):
-    url = API_ENDPOINT+"message_send/"
-    print(url)
+def lectio_send_msg(lectio_school_id, lectio_user, lectio_password, send_to, subject, msg, msg_can_be_replied):
+    url = f"{API_ENDPOINT}message_send/"
 
-    headers = CaseInsensitiveDict()
-    headers["accept"] = "application/json"
-    headers["Content-Type"] = "application/json"
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    }
 
-    payload = '{"lectio_school_id": "' + str(lectio_school_id)
-    payload = payload + '", "lectio_user": "' + lectio_user
-    payload = payload + '", "lectio_password": "' + lectio_password
-    payload = payload + '", "send_to": "' + send_to
-    payload = payload + '", "subject": "' + subject
-    payload = payload + '", "msg": "' + msg
-    payload = payload + '", "msg_can_be_replied": "' + str(msg_can_be_replied) + '"}'
+    # Use Python's json.dumps to convert the dictionary to a JSON string
+    payload = json.dumps({
+        "lectio_school_id": lectio_school_id,
+        "lectio_user": lectio_user,
+        "lectio_password": lectio_password,
+        "send_to": send_to,
+        "subject": subject,
+        "msg": msg,
+        "msg_can_be_replied": msg_can_be_replied
+    })
 
-    resp_post = requests.post(url, data=payload, headers=headers)
-    return resp_post
+    resp_post = requests.post(url, json=payload, headers=headers)
+
+    # Explicitly set the encoding to UTF-8 if needed (usually, requests will handle this)
+    resp_post.encoding = 'utf-8'
+
+    return resp_post.text  # Text content should now be properly UTF-8 encoded/decoded
 
 def main():
     lectio_school_id = 235
@@ -43,14 +50,10 @@ def main():
     subject = 'test subject'
     msg = 'test msg'
     msg_can_be_replied = False
-    print(lectio_send_msg(lectio_school_id, lectio_user, lectio_password, send_to, subject, msg, msg_can_be_replied).text)
-
-
+    print(lectio_send_msg(lectio_school_id, lectio_user, lectio_password, send_to, subject, msg, msg_can_be_replied))
 
 if __name__ == '__main__':
     main()
-
-
 
 ````
 
