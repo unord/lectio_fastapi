@@ -157,7 +157,8 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            link_beskeder = browser.find_element(By.PARTIAL_LINK_TEXT, 'Ny besked')
+            link_beskeder = browser.find_element(By.ID, 's_m_Content_Content_NewMessageLnk')
+            #link_beskeder = browser.find_element(By.PARTIAL_LINK_TEXT, 'Ny besked')
             browser.implicitly_wait(10)
             ActionChains(browser).move_to_element(link_beskeder).click(link_beskeder).perform()
             try_attempt = max_try_attempts
