@@ -160,11 +160,13 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            wait = WebDriverWait(browser, 10)
-            wait.until(EC.visibility_of_element_located((By.ID, "s_m_Content_Content_NewMessageLnk")))
-            link_beskeder = browser.find_element(By.ID, 's_m_Content_Content_NewMessageLnk')
+            element = browser.find_element_by_id('s_m_Content_Content_NewMessageLnk')
+            browser.execute_script("arguments[0].click();", element)
+            #wait = WebDriverWait(browser, 10)
+            #wait.until(EC.visibility_of_element_located((By.ID, "s_m_Content_Content_NewMessageLnk")))
+            #link_beskeder = browser.find_element(By.ID, 's_m_Content_Content_NewMessageLnk')
             #link_beskeder = browser.find_element(By.PARTIAL_LINK_TEXT, 'Ny besked')
-            ActionChains(browser).move_to_element(link_beskeder).click(link_beskeder).perform()
+            #ActionChains(browser).move_to_element(link_beskeder).click(link_beskeder).perform()
             try_attempt = max_try_attempts
         except Exception as e:
             if try_attempt == max_try_attempts - 1:
