@@ -160,7 +160,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            element = browser.find_element_by_id('s_m_Content_Content_NewMessageLnk')
+            element = browser.find_element(By.ID, 's_m_Content_Content_NewMessageLnk')
             browser.execute_script("arguments[0].click();", element)
             #wait = WebDriverWait(browser, 10)
             #wait.until(EC.visibility_of_element_located((By.ID, "s_m_Content_Content_NewMessageLnk")))
