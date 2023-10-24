@@ -184,7 +184,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             input_class_name = browser.find_element(By.ID, "s_m_Content_Content_MessageThreadCtrl_addRecipientDD_inp")
             input_class_name.send_keys(send_to)
             input_class_name.send_keys(Keys.ARROW_DOWN)
-            input_class_name.send_keys(Keys.ARROW_DOWN)
+            #input_class_name.send_keys(Keys.ARROW_DOWN)
             input_class_name.send_keys(Keys.ENTER)
             try_attempt = max_try_attempts
         except NoSuchElementException as e:
@@ -262,7 +262,7 @@ def download_teacher_information(lectio_school_id: int, browser: webdriver) -> d
     time.sleep(1)
     # with selenium download file
     try:
-        dowload_link = browser.find_element(By.ID, "m_Content_BtnExportLaerer").click()
+        browser.find_element(By.ID, "m_Content_BtnExportLaerer").click()
     except Exception as e:
         return {'msg': f'Could not find download link. Exception: {e}', 'success': False}
 
