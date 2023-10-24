@@ -181,7 +181,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            input_class_name = browser.find_element(By.ID, "s_m_Content_Content_addRecipientDD_inp")
+            input_class_name = browser.find_element(By.ID, "s_m_Content_Content_MessageThreadCtrl_addRecipientDD_inp")
             input_class_name.send_keys(send_to)
             input_class_name.send_keys(Keys.ARROW_DOWN)
             input_class_name.send_keys(Keys.ARROW_DOWN)
@@ -194,29 +194,13 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             try_attempt += 1
     print(f'Class inserted. Class: {send_to}')
 
-    '''
-    # test to if receiver is correct
-    try_attempt = 0
-    input_receiver_name = ""
-    while try_attempt != max_try_attempts:
-        try:
-            input_receiver_name = browser.find_element(By.CSS_SELECTOR, "#s_m_Content_Content_CreateThreadEditMessageGV > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(2) > span:nth-child(1)").text
-            if input_receiver_name != send_to or input_receiver_name == "":
-                return {'msg': f'Value of who is being sent to, is not the same as the receiver found on lectio.dk. User found by lectio.dk: {input_receiver_name}', 'success': False}
-            try_attempt = max_try_attempts
-        except NoSuchElementException:
-            if try_attempt == max_try_attempts - 1:
-                return {'msg': 'Could not find who the msg is being sent to. May be problems loading lectio.dk', 'success': False}
-            try_attempt += 1
 
-    print('Receiver is correct')
-    '''
 
     # insert message in "subject field"!
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            input_subject = browser.find_element(By.ID, "s_m_Content_Content_CreateThreadEditMessageTitle_tb")
+            input_subject = browser.find_element(By.ID, "s_m_Content_Content_MessageThreadCtrl_MessagesGV_ctl02_EditModeHeaderTitleTB_tb")
             input_subject.send_keys(subject)
             try_attempt = max_try_attempts
         except NoSuchElementException as e:
@@ -229,7 +213,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     # checkbox may reply
     if this_msg_can_be_replied is False:
         try:
-            checkbox_may_reply = browser.find_element(By.ID, "s_m_Content_Content_RepliesToThreadOrExistingMessageAllowedChk").click()
+            browser.find_element(By.ID, "s_m_Content_Content_MessageThreadCtrl_RepliesNotAllowedChkBox").click()
         except Exception as e:
             print(f"Could not find checkbox: may reply. exception: {e}")
             return {'msg': f'Could not find checkbox: may reply. Exception: {e}', 'success': False}
@@ -239,7 +223,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            input_message = browser.find_element(By.ID, "s_m_Content_Content_CreateThreadEditMessageContent_TbxNAME_tb")
+            input_message = browser.find_element(By.ID, "s_m_Content_Content_MessageThreadCtrl_MessagesGV_ctl02_EditModeContentBBTB_TbxNAME_tb")
             input_message.send_keys(msg)
             try_attempt = max_try_attempts
         except NoSuchElementException as e:
@@ -255,7 +239,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
-            button_submit = browser.find_element(By.ID, "s_m_Content_Content_CreateThreadEditMessageOkBtn")
+            button_submit = browser.find_element(By.ID, "s_m_Content_Content_MessageThreadCtrl_MessagesGV_ctl02_SendMessageBtn")
             button_submit.click()
             try_attempt = max_try_attempts
             print('Submit button clicked')
