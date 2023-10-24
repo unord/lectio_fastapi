@@ -153,11 +153,19 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
 
 
     # go to lectio message page
-    try:
-        link_beskeder = browser.find_element(By.PARTIAL_LINK_TEXT, 'Ny besked')
-        link_beskeder.click()
-    except Exception as e:
-        return {'msg': f'Could not find link: Ny besked. Exception: {e}', 'success': False, 'current_url': browser.current_url}
+    try_attempt = 0
+    while try_attempt != max_try_attempts:
+        try:
+            link_beskeder = browser.find_element(By.PARTIAL_LINK_TEXT, 'Ny besked')
+            link_beskeder.click()
+            try_attempt = max_try_attempts
+        except Exception as e:
+            if try_attempt == max_try_attempts - 1:
+                print(f"Could not find who to send to. May be problems loading lectio.dk. Exception: {e}")
+                return {'msg': f'Could not find link: Ny besked. Exception: {e}', 'success': False, 'current_url': browser.current_url}
+            try_attempt += 1
+
+
     print('Message page loaded')
     print('Inserting message')
     # insert class in "to field"
