@@ -9,6 +9,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 import os
+from selenium.webdriver.common.action_chains import ActionChains
 
 
 def clean_for_json(this_dict: str) -> str:
@@ -157,7 +158,8 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     while try_attempt != max_try_attempts:
         try:
             link_beskeder = browser.find_element(By.ID, 's_m_Content_Content_NewMessageLnk')
-            link_beskeder.click()
+            browser.implicitly_wait(10)
+            ActionChains(browser).move_to_element(link_beskeder).click(link_beskeder).perform()
             try_attempt = max_try_attempts
         except Exception as e:
             if try_attempt == max_try_attempts - 1:
