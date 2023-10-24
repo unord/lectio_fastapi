@@ -4,12 +4,15 @@ import requests
 import bs4
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 import os
-from selenium.webdriver.common.action_chains import ActionChains
+
 
 
 def clean_for_json(this_dict: str) -> str:
@@ -157,9 +160,10 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
     try_attempt = 0
     while try_attempt != max_try_attempts:
         try:
+            wait = WebDriverWait(browser, 10)
+            wait.until(EC.visibility_of_element_located((By.ID, "s_m_Content_Content_NewMessageLnk")))
             link_beskeder = browser.find_element(By.ID, 's_m_Content_Content_NewMessageLnk')
             #link_beskeder = browser.find_element(By.PARTIAL_LINK_TEXT, 'Ny besked')
-            browser.implicitly_wait(10)
             ActionChains(browser).move_to_element(link_beskeder).click(link_beskeder).perform()
             try_attempt = max_try_attempts
         except Exception as e:
