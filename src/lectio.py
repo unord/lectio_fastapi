@@ -157,7 +157,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
         link_beskeder = browser.find_element(By.PARTIAL_LINK_TEXT, 'Ny besked')
         link_beskeder.click()
     except Exception as e:
-        return {'msg': f'Could not find link: Ny besked. Exception: {e}', 'success': False}
+        return {'msg': f'Could not find link: Ny besked. Exception: {e}', 'success': False, 'current_url': browser.current_url}
     print('Message page loaded')
     print('Inserting message')
     # insert class in "to field"
