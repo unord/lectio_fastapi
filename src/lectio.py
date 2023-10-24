@@ -161,7 +161,7 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
             try_attempt = max_try_attempts
         except Exception as e:
             if try_attempt == max_try_attempts - 1:
-                print(f"Could not find who to send to. May be problems loading lectio.dk. Exception: {e}")
+                print(f"Could not find who to send to. May be problems loading lectio.dk. Current url: {browser.current_url} . Exception: {e}")
                 return {'msg': f'Could not find link: Ny besked. Exception: {e}', 'success': False, 'current_url': browser.current_url}
             try_attempt += 1
 
