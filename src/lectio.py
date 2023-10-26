@@ -183,9 +183,10 @@ def lectio_send_msg(send_to: str, subject: str, msg: str, this_msg_can_be_replie
         try:
             input_class_name = browser.find_element(By.ID, "s_m_Content_Content_MessageThreadCtrl_addRecipientDD_inp")
             input_class_name.send_keys(send_to)
-            input_class_name.send_keys(Keys.ARROW_DOWN)
-            #input_class_name.send_keys(Keys.ARROW_DOWN)
-            input_class_name.send_keys(Keys.ENTER)
+            time.sleep(1)
+            list_element = browser.find_element(By.XPATH, f"//li[contains(text(),'{send_to}(')]")
+            list_element.click()
+            #input_class_name.send_keys(Keys.ENTER)
             try_attempt = max_try_attempts
         except NoSuchElementException as e:
             if try_attempt == max_try_attempts - 1:
