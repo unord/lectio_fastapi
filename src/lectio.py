@@ -74,7 +74,7 @@ def lectio_login(school_id: int, lectio_user: str, lectio_password: str, browser
     print(f'Logging in to school id: {school_id}')
     max_try_attempts = 100
 
-    this_url = f"https://www.lectio.dk/lectio/{school_id}/login.aspx"
+    this_url = f"https://www.lectio.dk/lectio/{school_id}/login.aspx?forcelogintype=brugernavn"
 
     # go to login page
     try:
